@@ -23,6 +23,15 @@ Install the BestChange skill:
 npx skills add SwiftAdviser/public-skills --skill bestchange
 ```
 
+Connect the hosted BestChange MCP server in Claude Code:
+
+```bash
+claude mcp add --transport http bestchange https://bestchange-mcp.krutovoy.me/mcp
+claude mcp list
+```
+
+Then restart Claude Code or run `/mcp` and confirm the `bestchange` server is connected.
+
 Install the UAH Mono Payouts skill:
 
 ```bash

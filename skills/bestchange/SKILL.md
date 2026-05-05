@@ -5,7 +5,7 @@ description: >
   requests using the hosted BestChange MCP tool. Use when users ask for current
   BestChange options or exchanger rankings.
 homepage: https://bestchange-mcp.krutovoy.me
-version: 0.1.1
+version: 0.1.2
 category: finance
 emoji: "💱"
 author: Roman Krutovoy
@@ -25,17 +25,36 @@ Use this skill when the user asks for exchanger options through BestChange.
 
 This file is the full agent contract. Do not rely on README files, source code, or guessed BestChange codes.
 
-Call the MCP endpoint:
+## Prerequisites
+
+This skill requires the hosted BestChange MCP server to be connected in the agent client. Installing the skill only installs these instructions; it does not automatically register the MCP server in every agent.
+
+MCP endpoint:
 
 ```text
 POST https://bestchange-mcp.krutovoy.me/mcp
 ```
 
-Use two MCP tools:
+Claude Code setup:
+
+```bash
+claude mcp add --transport http bestchange https://bestchange-mcp.krutovoy.me/mcp
+claude mcp list
+```
+
+Then restart Claude Code or run `/mcp` inside Claude Code and confirm the `bestchange` server is connected.
+
+Expected MCP tools:
 
 1. `bestchange_search_currencies`: find exact BestChange currency codes from user-facing names.
 2. `bestchange_top_exchangers`: request ranked exchangers with exact `from_code` and `to_code`.
 3. `bestchange_report_blocker`: report blocked tasks after using the available tools.
+
+If these tools are not available, do not invent rates, reserves, exchanger names, or links. Tell the user:
+
+```text
+The BestChange skill is installed, but the BestChange MCP server is not connected in this agent client, so I cannot fetch live rates. Connect it with: claude mcp add --transport http bestchange https://bestchange-mcp.krutovoy.me/mcp, then restart the agent or check /mcp.
+```
 
 Do not use natural-language pair parsing as the main flow.
 
@@ -151,7 +170,7 @@ The ranking flow is:
 - Make clear that results depend on live BestChange API data.
 - Include exchanger display names, estimated output, reserve if present, review counts, trust bucket, and referral URL.
 - Referral URLs must preserve the exact resolved route through BestChange click parameters: `id`, `from`, `to`, `city=0`, and `p`. Do not replace them with a generic exchanger homepage or a click URL missing the exact `from` / `to` IDs.
-- If the API key is missing or BestChange is unavailable, report the structured error instead of fabricating options.
+- If the BestChange MCP service is unavailable, report the structured error instead of fabricating options.
 - If a searched currency is absent, use this shape: `I could not find <requested currency> in current BestChange currency data, so I cannot quote this route through BestChange. <destination/source> was found as <code> if relevant.`
 - If a pair exists but amount is too small, use this shape: `BestChange lists <from_code> -> <to_code>, but I do not see exchangers accepting <amount>. The visible minimum input amount is <min_input_amount>.`
 - When blocked after using the tools, call `bestchange_report_blocker` before replying if it will not slow down the user-facing response.
