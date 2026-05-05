@@ -5,7 +5,7 @@ description: >
   requests using the hosted BestChange MCP tool. Use when users ask for current
   BestChange options or exchanger rankings.
 homepage: https://bestchange-mcp.krutovoy.me
-version: 0.1.0
+version: 0.1.1
 category: finance
 emoji: "💱"
 author: Roman Krutovoy
@@ -150,7 +150,60 @@ The ranking flow is:
 - Do not invent BestChange currency codes.
 - Make clear that results depend on live BestChange API data.
 - Include exchanger display names, estimated output, reserve if present, review counts, trust bucket, and referral URL.
+- Referral URLs must preserve the exact resolved route through BestChange click parameters: `id`, `from`, `to`, `city=0`, and `p`. Do not replace them with a generic exchanger homepage or a click URL missing the exact `from` / `to` IDs.
 - If the API key is missing or BestChange is unavailable, report the structured error instead of fabricating options.
 - If a searched currency is absent, use this shape: `I could not find <requested currency> in current BestChange currency data, so I cannot quote this route through BestChange. <destination/source> was found as <code> if relevant.`
 - If a pair exists but amount is too small, use this shape: `BestChange lists <from_code> -> <to_code>, but I do not see exchangers accepting <amount>. The visible minimum input amount is <min_input_amount>.`
 - When blocked after using the tools, call `bestchange_report_blocker` before replying if it will not slow down the user-facing response.
+
+## Response Formatting
+
+Reply in the user's conversation language. Use the structure below for successful quotes, adapting labels and prose to that language.
+
+Keep the answer compact and decision-oriented:
+
+1. Start with a short line saying the result comes from live BestChange API data.
+2. Show the exact route as a bold heading.
+3. Highlight the best option first with exchanger name, estimated output, rate, reserve, reviews, claim, and route-specific referral URL.
+4. Explain briefly why this option is preferred.
+5. Show 2-3 backup options in a smaller format.
+6. End with a short pre-send checklist that repeats the exact network/code and payout rail.
+
+Example shape, with live values and links replaced by the actual tool response:
+
+```text
+According to the live BestChange API, the best exchange right now is:
+
+**800 USDTTON -> Monobank UAH**
+
+**DigiChanger** ✅
+**≈ 34,582.28 UAH**
+Rate: **43.2279**
+Reserve: **1.29B UAH**
+Reviews: **245 positive**, claim **0**
+
+https://www.bestchange.com/click.php?id=1160&from=313&to=84&city=0&p=1341676
+
+I would choose **DigiChanger**: it is first by estimated payout, accepts the requested amount, and is in the primary trust bucket.
+
+**Backup options**
+
+**2. PocketBank**
+≈ 34,401.37 UAH
+Rate: 43.0017
+Reserve: 518.8M UAH
+Reviews: 60
+https://www.bestchange.com/click.php?id=1030&from=313&to=84&city=0&p=1341676
+
+**3. ObmenMoney**
+≈ 34,401.34 UAH
+Rate: 43.0017
+Reserve: 4.3M UAH
+Reviews: 580
+https://www.bestchange.com/click.php?id=609&from=313&to=84&city=0&p=1341676
+
+Before sending:
+
+🔒 **Network:** TON / `USDTTON`
+💳 **Card:** Monobank UAH, without recipient details being auto-replaced
+```
