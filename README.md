@@ -32,6 +32,16 @@ claude mcp list
 
 Then restart Claude Code or run `/mcp` and confirm the `bestchange` server is connected.
 
+Install the Monobank skill:
+
+```bash
+npx skills add SwiftAdviser/public-skills --skill monobank
+```
+
+This skill calls the official Monobank API directly from the agent runtime with
+a user-supplied per-request token. It does not use a hosted MCP proxy for real
+balances.
+
 Install the UAH Mono Payouts skill:
 
 ```bash
@@ -47,6 +57,16 @@ requests through the hosted BestChange MCP endpoint:
 
 ```text
 https://bestchange-mcp.krutovoy.me/mcp
+```
+
+### monobank
+
+Answer Monobank balance questions by calling the official Monobank API directly
+with a user-supplied per-request token. The token must not be stored, logged, or
+sent through a hosted proxy.
+
+```text
+https://api.monobank.ua/personal/client-info
 ```
 
 ### uah-mono-payouts
