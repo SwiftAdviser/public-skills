@@ -1,6 +1,6 @@
 ---
 name: uah-mono-payouts
-description: Use when a user wants an agent to convert USDT BEP20 into UAH payout instructions through a verified exchanger flow with approval, expiry, and payment monitoring.
+description: Use when a user wants an agent to convert USDT BEP20 into UAH payout instructions through a verified exchange flow with approval, expiry, AML screening, and payment monitoring.
 homepage: https://mcp-wallet.mandate.md
 metadata:
   openclaw:
@@ -12,7 +12,7 @@ metadata:
       - usdt
       - bep20
       - uah
-      - exchanger
+      - exchange
       - approval
       - telegram
     requires:
@@ -22,7 +22,7 @@ metadata:
 
 # UAH Mono Payouts
 
-Use this skill when a user asks you to convert USDT BEP20 into a UAH payout through an exchanger.
+Use this skill when a user asks you to convert USDT BEP20 into a UAH payout through a verified exchange route.
 
 MVP scope is narrow:
 
@@ -40,13 +40,14 @@ Do not use this skill for other tokens, other chains, portfolio management, gene
 You must fail closed.
 
 - Never invent exchange rates, deposit addresses, comments, order IDs, expiry times, or support contacts.
-- Never scrape exchanger pages yourself.
+- Never scrape exchange or provider pages yourself.
 - Never tell the user to send funds before the order is approved.
 - Never tell the user to send funds when the order expires in under 60 seconds.
 - Never continue if MCP is unavailable or order status is unclear.
 - Always show the network as `BEP20 / BNB Smart Chain`, not just `USDT`.
+- Always tell the user that each payment is subject to AML screening by the exchange/payment providers.
 - Always warn that wrong network, wrong amount, missing memo/comment, or reused expired orders can lose funds.
-- Always preserve exchanger name, order ID, order link, created time, expiry time, and support path.
+- Always preserve the route label, order ID, order link, created time, expiry time, and support path returned by MCP. Do not replace them with guessed provider details.
 
 ## Mandatory Flow
 
@@ -65,7 +66,7 @@ You must fail closed.
 11. Wait for approval.
 12. Call `render_payment_instructions`.
 13. Show the exact payment instructions only if `can_send` is true.
-14. Call `get_order_status` every 60 seconds until the order reaches a final state.
+14. Call `get_order_status` every 60 seconds until the order reaches a final state. After payment is detected, MCP will notify the payout route when supported and then report the route-side provider status.
 
 Final states:
 
@@ -75,7 +76,13 @@ Final states:
 - `failed`
 - `cancelled`
 
-If status becomes `support_needed`, show exchanger support details and stop automatic retries.
+If status becomes `support_needed`, show the support details returned by MCP and stop automatic retries.
+
+After the user sends funds, keep polling. Report these non-final states plainly:
+
+- `deposit_seen`: payment was detected on-chain; waiting for route-side confirmation.
+- `payout_in_progress`: payment was acknowledged; UAH payout is being processed.
+- `support_needed`: stop automatic retries and show MCP support details.
 
 ## Contact Resolution
 
@@ -121,13 +128,13 @@ For a Monobank IBAN:
 }
 ```
 
-If an exchanger asks for Telegram, use the contact Telegram if present. If missing and the flow requires a fallback, use:
+If the exchange flow asks for Telegram, use the contact Telegram if present. If missing and the flow requires a fallback, use:
 
 ```text
 @SwiftAdviser
 ```
 
-If an exchanger requires email and the contact has none, use:
+If the exchange flow requires email and the contact has none, use:
 
 ```text
 swiftadviser@gmail.com
@@ -207,7 +214,7 @@ If `requires_disambiguation` is true, ask the user which account to use before q
 
 Use after payout details and amount semantics are known. Include the selected `payout` object when available.
 
-The backend ranks BestChange-derived exchanger options. You do not manually choose rates from websites.
+The backend ranks verified exchange options. You do not manually choose rates from websites.
 
 Show one best route unless the user asks for alternatives.
 
@@ -215,7 +222,7 @@ Show one best route unless the user asks for alternatives.
 
 Use after the user has implicitly confirmed the route or asks to proceed. Include the same `payout` object used for quoting.
 
-This creates an exchanger order and returns an approval URL. It does not mean the user should send funds yet.
+This creates an exchange order and returns an approval URL. It does not mean the user should send funds yet.
 
 ### `render_payment_instructions`
 
@@ -226,6 +233,8 @@ If the tool returns `can_send: false`, show its message and do not add payment i
 ### `get_order_status`
 
 Poll every 60 seconds after payment instructions are shown.
+
+If `provider_status` or `provider_status_checked_at` is present, include it in status updates. Do not infer route-side progress from a balance probe.
 
 Stop polling when the order is final.
 
@@ -245,9 +254,10 @@ Found route
 You receive: 5000 UAH
 You send: 119.84 USDT
 Network: BEP20 / BNB Smart Chain
-Exchanger: Swap-line
+Route: route label returned by MCP
 Rate: 41.72 UAH
 Expires: 18:42 WITA
+AML: payment is subject to provider AML screening
 
 Approve:
 https://mcp-wallet.mandate.md/approve/...
@@ -265,6 +275,7 @@ Comment: SL-483920
 Expires: 18:42 WITA
 
 Send the exact amount. Do not use another network. Do not reuse this order after expiry.
+Payment is subject to provider AML screening.
 ```
 
 ### Under 60 Seconds
@@ -291,7 +302,7 @@ Status: completed
 Support needed.
 
 Order: SL-483920
-Exchanger: Swap-line
+Route: route label returned by MCP
 Reason: partial payment detected
 Support: https://...
 ```
