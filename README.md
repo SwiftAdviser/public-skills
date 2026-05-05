@@ -23,6 +23,12 @@ Install the BestChange skill:
 npx skills add SwiftAdviser/public-skills --skill bestchange
 ```
 
+Install the UAH Mono Payouts skill:
+
+```bash
+npx skills add SwiftAdviser/public-skills --skill uah-mono-payouts
+```
+
 ## Available Skills
 
 ### bestchange
@@ -32,4 +38,13 @@ requests through the hosted BestChange MCP endpoint:
 
 ```text
 https://bestchange-mcp.krutovoy.me/mcp
+```
+
+### uah-mono-payouts
+
+Convert USDT BEP20 into UAH payout instructions through the hosted MCP endpoint
+with quote, approval, expiry, and payment monitoring safeguards:
+
+```text
+https://mcp-wallet.mandate.md/mcp
 ```
