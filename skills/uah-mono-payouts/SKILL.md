@@ -81,6 +81,8 @@ You must fail closed.
 - Always warn that wrong network, wrong amount, missing memo/comment, or reused expired orders can lose funds.
 - Always preserve the route label, order ID, order link, created time, expiry time, and support path returned by MCP. Do not replace them with guessed provider details.
 - Always show `exchanger_order_url` when MCP returns it, including when it appears inside `payment_instructions.fields.exchanger_order_url`.
+- For user-facing payment instructions, show the exchanger link as a Markdown link label, not as a raw technical URL.
+- Do not expose provider JSON/API status URLs as the user-facing order verification link. Use the human order page URL returned by MCP.
 - Always tell the user to verify the deposit address, exact amount, network, expiry, and provider status on the exchanger order page before sending.
 - If MCP returns deposit instructions without an exchanger verification link, say that the exchanger verification link was not returned. Do not invent one.
 
@@ -376,7 +378,9 @@ When present, preserve and show:
 - top-level `external_order_id`
 - `payment_instructions.fields.exchanger_order_url`
 
-The exchanger order URL is the user's independent verification page/API link for deposit details. Do not hide it.
+The exchanger order URL is the user's independent verification page for deposit details. Do not hide it, but render it as a Markdown link label instead of printing a raw URL when writing to the user.
+
+If `payment_instructions.message` is present, prefer showing it exactly. It is already formatted for the user.
 
 ### `render_payment_instructions`
 
@@ -432,26 +436,19 @@ Say "create order" and I will create the exchange order and return exact deposit
 ### Payment Instructions
 
 ```text
-Send now
+✅ **Send now**
 
 **119.84 USDT BEP20 -> Monobank UAH**
 
-Order: **SL-483920**
-Amount: **119.84 USDT**
-Network: **BEP20 / BNB Smart Chain**
-Address: `0x...`
-Comment: `SL-483920`
-Verify order: https://exchanger.example/order/SL-483920
-Expires: **18:42 WITA**
+🧾 **Order:** SL-483920
+🔗 **Check order:** [open order page](https://exchanger.example/order/SL-483920/)
+💵 **Amount:** **119.84 USDT**
+⛓️ **Network:** **BEP20 / BNB Smart Chain**
+🏦 **Address:** `0x...`
+📝 **Comment/memo:** `SL-483920`
+⏳ **Expires:** today at 18:42 WITA (10:42 UTC)
 
-Before sending, verify on the exchanger order page:
-
-Network: **BEP20 / BNB Smart Chain**
-Amount: **119.84 USDT**
-Address: `0x...`
-Comment/memo: `SL-483920`
-Provider status: order is waiting for deposit
-
+Before sending, open the order page and verify amount, network, address, expiry, and provider status.
 Send the exact amount. Do not use another network. Do not reuse this order after expiry.
 Payment is subject to provider AML screening.
 ```
