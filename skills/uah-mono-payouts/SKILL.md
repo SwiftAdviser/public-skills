@@ -380,7 +380,7 @@ When present, preserve and show:
 
 The exchanger order URL is the user's independent verification page for deposit details. Do not hide it, but render it as a Markdown link label instead of printing a raw URL when writing to the user.
 
-If `payment_instructions.message` is present, prefer showing it exactly. It is already formatted for the user.
+If `payment_instructions.message` is present, show it exactly. Do not rebuild it from `fields`, because the message already has the intended emoji, title, bold labels, hidden order link, and expiry wording.
 
 ### `render_payment_instructions`
 
@@ -436,7 +436,7 @@ Say "create order" and I will create the exchange order and return exact deposit
 ### Payment Instructions
 
 ```text
-✅ **Send now**
+✅ **Order ready**
 
 **119.84 USDT BEP20 -> Monobank UAH**
 
@@ -448,10 +448,12 @@ Say "create order" and I will create the exchange order and return exact deposit
 📝 **Comment/memo:** `SL-483920`
 ⏳ **Expires:** today at 18:42 WITA (10:42 UTC)
 
-Before sending, open the order page and verify amount, network, address, expiry, and provider status.
+Check the order page once before sending.
 Send the exact amount. Do not use another network. Do not reuse this order after expiry.
 Payment is subject to provider AML screening.
 ```
+
+If `payment_instructions.fields.comment` is null or empty, omit the `Comment/memo` line entirely. Do not write `not required`.
 
 If MCP does not return `exchanger_order_url`, keep the same structure but replace the verification line with:
 
