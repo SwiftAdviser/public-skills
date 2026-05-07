@@ -30,7 +30,7 @@ MVP scope is narrow:
 - Source network: BEP20 / BNB Smart Chain.
 - Destination: UAH.
 - Contact source: agent-owned context, usually `./mandate-wallet/contacts.csv`.
-- Human approval: web approval link.
+- Human approval: the user's explicit "create order" confirmation in chat. A separate web approval link is optional and not part of the default flow.
 - Status monitoring: poll the MCP order status every 60 seconds.
 
 Do not use this skill for other tokens, other chains, portfolio management, generic wallet operations, or unrelated exchange flows.
@@ -41,7 +41,7 @@ You must fail closed.
 
 - Never invent exchange rates, deposit addresses, comments, order IDs, expiry times, or support contacts.
 - Never scrape exchange or provider pages yourself.
-- Never tell the user to send funds before the order is approved.
+- Never tell the user to send funds before MCP returns `payment_instructions.can_send: true`.
 - Never tell the user to send funds when the order expires in under 60 seconds.
 - Never continue if MCP is unavailable or order status is unclear.
 - Always show the network as `BEP20 / BNB Smart Chain`, not just `USDT`.
@@ -61,12 +61,11 @@ You must fail closed.
 6. Build a `payout` object with exact bank details.
 7. Call `quote_uah_payout`.
 8. Present the best route briefly.
-9. Call `create_uah_payout_order`.
-10. Send the approval URL.
-11. Wait for approval.
-12. Call `render_payment_instructions`.
-13. Show the exact payment instructions only if `can_send` is true.
-14. Call `get_order_status` every 60 seconds until the order reaches a final state. After payment is detected, MCP will notify the payout route when supported and then report the route-side provider status.
+9. Ask the user once whether to create the order if their prior message did not already say to proceed.
+10. Call `create_uah_payout_order`.
+11. If the response includes `payment_instructions.can_send: true`, show those exact payment instructions immediately.
+12. If `payment_instructions.can_send` is false or missing, do not send funds; show the returned blocker.
+13. Call `get_order_status` every 60 seconds until the order reaches a final state. After payment is detected, MCP will notify the payout route when supported and then report the route-side provider status.
 
 Final states:
 
@@ -240,11 +239,17 @@ This route is currently available from 230.41 to 10000 USDT. I did not create an
 
 Use after the user has implicitly confirmed the route or asks to proceed. Include the same `payout` object used for quoting.
 
-This creates an exchange order and returns an approval URL. It does not mean the user should send funds yet.
+This creates an exchange order and normally returns `payment_instructions` immediately. Treat the user's "create the order" message as the approval step. Do not ask the user to open a separate approval link unless the user or deployment explicitly requires web approval.
+
+Only pass `require_web_approval: true` for a legacy/manual review flow. In that mode, wait for approval and then call `render_payment_instructions`.
+
+In the default flow, show deposit instructions only from `payment_instructions` and only when `payment_instructions.can_send` is true.
 
 ### `render_payment_instructions`
 
-Use only after approval.
+Use only for an order that MCP has already approved or moved to `payment_pending`.
+
+Usually you do not need this tool because `create_uah_payout_order` returns `payment_instructions`. Use it only to re-render instructions for an already-created order.
 
 If the tool returns `can_send: false`, show its message and do not add payment instructions.
 
