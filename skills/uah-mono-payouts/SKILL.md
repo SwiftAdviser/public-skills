@@ -218,6 +218,24 @@ The backend ranks verified exchange options. You do not manually choose rates fr
 
 Show one best route unless the user asks for alternatives.
 
+If the response is:
+
+```json
+{ "error": "quote_unavailable", "quotes": [] }
+```
+
+do not create an order and do not tell the user to send funds.
+
+If `diagnostics.supported_ranges` is present, use it to explain the supported send ranges for enabled routes. For `reason: "amount_below_min"`, suggest the smallest `min_send_amount` returned by MCP. For `reason: "amount_above_max"`, suggest splitting the payout or using an amount at or below `max_send_amount`. If `supported_ranges` is empty, say that MCP currently has no enabled route for this method and amount.
+
+Example:
+
+```text
+No safe quote for 30 USDT.
+
+This route is currently available from 230.41 to 10000 USDT. I did not create an order, and you should not send funds.
+```
+
 ### `create_uah_payout_order`
 
 Use after the user has implicitly confirmed the route or asks to proceed. Include the same `payout` object used for quoting.
@@ -351,7 +369,7 @@ If any required tool fails, stop the payment flow and explain the precise blocke
 
 - contacts unavailable
 - contact details incomplete
-- quotes unavailable
+- quotes unavailable; if MCP returns supported ranges, show those ranges and ask whether the user wants to retry with a supported amount
 - order creation failed
 - approval expired
 - order expires in under 60 seconds
