@@ -48,6 +48,12 @@ Install the UAH Mono Payouts skill:
 npx skills add SwiftAdviser/public-skills --skill uah-mono-payouts
 ```
 
+Install the AI Hypergrowth GTM skill:
+
+```bash
+npx skills add SwiftAdviser/public-skills --skill ai-hypergrowth-gtm
+```
+
 ## Available Skills
 
 ### bestchange
@@ -76,4 +82,14 @@ with quote, approval, expiry, and payment monitoring safeguards:
 
 ```text
 https://mcp-wallet.mandate.md/mcp
+```
+
+### ai-hypergrowth-gtm
+
+Apply AI sales-led hypergrowth patterns to B2B startup GTM: wedge selection,
+founder-led sales, design partners, paid pilots, labor-cost pricing, and
+enterprise expansion.
+
+```text
+https://sevaustinov.me/hypergrowth-research/
 ```
