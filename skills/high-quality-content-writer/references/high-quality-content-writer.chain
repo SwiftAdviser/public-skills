@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "name": "High Quality Content Writer",
+  "description": "Writes or rewrites content, evaluates it with anti-slop quality gates, retries with fix instructions until passing.",
+  "defaults": {
+    "model": "sonnet",
+    "maxTurns": 120,
+    "maxParallel": 1,
+    "timeout_minutes": 45
+  },
+  "nodes": [
+    {
+      "id": "input-1",
+      "type": "input",
+      "position": { "x": 0, "y": 200 },
+      "config": {}
+    },
+    {
+      "id": "writer-1",
+      "type": "skill",
+      "position": { "x": 300, "y": 200 },
+      "config": {
+        "skillRef": "high-quality-content-writer",
+        "prompt": "Write or rewrite the provided content into a specific, fact-dense, human draft. Preserve meaning and facts. Remove AI slop, generic claims, weak causality, filler, unsupported superlatives, and trope patterns. Write the candidate only.",
+        "maxTurns": 60
+      }
+    },
+    {
+      "id": "quality-check-1",
+      "type": "evaluator",
+      "position": { "x": 600, "y": 200 },
+      "config": {
+        "criteria": "Score 1-10 on: brief adherence, factual integrity, specificity, fact density, causality, voice, and slop risk. Hard fail if the text invents facts, drops required claims, has probable_slop/obvious_slop slop-check verdict, or keeps generic AI-writing tropes. Pass only if publishable with no structural rewrite required.",
+        "threshold": 8,
+        "maxRetries": 4,
+        "retryFrom": "writer-1",
+        "skillRefs": ["high-quality-content-writer", "slop-check"]
+      }
+    },
+    {
+      "id": "output-1",
+      "type": "output",
+      "position": { "x": 900, "y": 200 },
+      "config": {}
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "input-1", "target": "writer-1", "type": "default" },
+    { "id": "e2", "source": "writer-1", "target": "quality-check-1", "type": "default" },
+    { "id": "e3", "source": "quality-check-1", "target": "output-1", "type": "pass" },
+    { "id": "e4", "source": "quality-check-1", "target": "writer-1", "type": "fail" }
+  ]
+}

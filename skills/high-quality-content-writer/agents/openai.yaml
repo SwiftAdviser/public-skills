@@ -1,0 +1,4 @@
+interface:
+  display_name: "High Quality Content Writer"
+  short_description: "Write or clean content through anti-slop quality gates."
+  default_prompt: "Use $high-quality-content-writer to improve this content until it passes the quality gates, then return the final text and QA report."

@@ -17,6 +17,7 @@ Private app source code, deployment configuration, environment files, API keys, 
   - [monobank](#monobank) - Monobank balance checks
   - [uah-mono-payouts](#uah-mono-payouts) - USDT BEP20 to UAH payout flow
   - [ai-hypergrowth-gtm](#ai-hypergrowth-gtm) - AI sales-led hypergrowth GTM
+  - [high-quality-content-writer](#high-quality-content-writer) - Anti-slop content writing and scoring
 - [Repository Structure](#repository-structure)
 - [License](#license)
 
@@ -39,6 +40,7 @@ npx skills add SwiftAdviser/public-skills --skill bestchange -g -y
 npx skills add SwiftAdviser/public-skills --skill monobank -g -y
 npx skills add SwiftAdviser/public-skills --skill uah-mono-payouts -g -y
 npx skills add SwiftAdviser/public-skills --skill ai-hypergrowth-gtm -g -y
+npx skills add SwiftAdviser/public-skills --skill high-quality-content-writer -g -y
 ```
 
 ---
@@ -144,6 +146,34 @@ https://sevaustinov.me/hypergrowth-research/
 
 ---
 
+### [high-quality-content-writer](skills/high-quality-content-writer)
+
+Write, rewrite, audit, and improve prose through deterministic anti-slop gates. Use it for content cleanup, link or text grading, AI-writing trope removal, article/copy review, and closed-loop rewrites until the draft is specific, fact-dense, and publishable.
+
+- Scores pasted text, local files, and URLs for AI-writing trope density
+- Runs a bundled quality gate with specificity, causality, voice, and slop-risk criteria
+- Creates retry artifacts for evaluator and writer subagents
+- Preserves meaning and facts while removing generic claims, filler, and unsupported polish
+- Includes public references for the scoring rubric and isolated writer/evaluator flows
+
+Primary scripts:
+
+```text
+scripts/slop_score.py
+scripts/quality_gate.py
+scripts/content_quality_loop.py
+```
+
+**Triggers:**
+
+- "check this text for AI slop"
+- "rewrite this until it passes quality gates"
+- "score this article"
+- "remove AI-writing tropes"
+- "make this copy specific and publishable"
+
+---
+
 ## Repository Structure
 
 ```text
@@ -159,6 +189,10 @@ public-skills/
     ai-hypergrowth-gtm/
       SKILL.md
       references/
+    high-quality-content-writer/
+      SKILL.md
+      references/
+      scripts/
 ```
 
 Each skill folder is intended to be installable on its own. `SKILL.md` is the full agent contract; reference files are loaded only when the agent needs deeper context.
