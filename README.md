@@ -4,7 +4,7 @@
 
 Public agent skills by SwiftAdviser.
 
-These skills are written as `SKILL.md` contracts for tool-using agents such as Codex, OpenAI agents, Claude Code, Cursor, Cline, Amp, and other runtimes that support agent skills. They are distributed through the open skills.sh ecosystem, not a Claude-only marketplace.
+These skills are written as `SKILL.md` contracts for tool-using agents such as Codex, OpenAI agents, Claude Code, Cursor, Cline, Amp, and other runtimes that support agent skills. They are distributed through skills.sh, not a Claude-only marketplace.
 
 Private app source code, deployment configuration, environment files, API keys, tokens, and operational secrets do not belong in this repository.
 
@@ -12,20 +12,19 @@ Private app source code, deployment configuration, environment files, API keys, 
 
 - [Installation](#installation)
   - [Via skills.sh (recommended)](#via-skillssh-recommended)
-  - [Manual installation](#manual-installation)
-  - [Local testing](#local-testing)
 - [Available Skills](#available-skills)
   - [bestchange](#bestchange) - BestChange exchanger discovery
   - [monobank](#monobank) - Monobank balance checks
   - [uah-mono-payouts](#uah-mono-payouts) - USDT BEP20 to UAH payout flow
   - [ai-hypergrowth-gtm](#ai-hypergrowth-gtm) - AI sales-led hypergrowth GTM
 - [Repository Structure](#repository-structure)
-- [Safety Policy](#safety-policy)
 - [License](#license)
 
 ## Installation
 
 ### Via skills.sh (recommended)
+
+List the catalog first because each install command targets one named skill globally. Every install uses the same `SKILL.md` contract from this repository, so supported agent runtimes read the same operating instructions.
 
 List available skills:
 
@@ -40,58 +39,6 @@ npx skills add SwiftAdviser/public-skills --skill bestchange -g -y
 npx skills add SwiftAdviser/public-skills --skill monobank -g -y
 npx skills add SwiftAdviser/public-skills --skill uah-mono-payouts -g -y
 npx skills add SwiftAdviser/public-skills --skill ai-hypergrowth-gtm -g -y
-```
-
-Install by direct skill path:
-
-```bash
-npx skills add SwiftAdviser/public-skills/skills/ai-hypergrowth-gtm -g -y
-```
-
-Use `--copy` when you want a physical copy instead of a symlink:
-
-```bash
-npx skills add SwiftAdviser/public-skills --skill ai-hypergrowth-gtm -g -y --copy
-```
-
-The npm package name is `skills`, so the working command is `npx skills add ...`.
-
-### Manual Installation
-
-If your agent runtime does not support skills.sh yet, copy the target skill folder into that agent's skills directory.
-
-Global Codex example:
-
-```bash
-mkdir -p ~/.codex/skills
-cp -R skills/ai-hypergrowth-gtm ~/.codex/skills/
-```
-
-Project-local agent example:
-
-```bash
-mkdir -p .agents/skills
-cp -R skills/ai-hypergrowth-gtm .agents/skills/
-```
-
-Restart the agent client after copying if it does not hot-reload skills.
-
-### Local Testing
-
-From this repository:
-
-```bash
-npx skills add . --list
-npx skills add . --skill ai-hypergrowth-gtm -g -y --copy
-```
-
-Isolated install test:
-
-```bash
-TMP_HOME="$(mktemp -d)"
-HOME="$TMP_HOME" npx skills add . --skill ai-hypergrowth-gtm -g -y --copy
-find "$TMP_HOME" -name SKILL.md -path "*/ai-hypergrowth-gtm/SKILL.md" -print
-rm -rf "$TMP_HOME"
 ```
 
 ---
@@ -216,22 +163,6 @@ public-skills/
 
 Each skill folder is intended to be installable on its own. `SKILL.md` is the full agent contract; reference files are loaded only when the agent needs deeper context.
 
-## Safety Policy
-
-Public skills must not contain:
-
-- API keys, bearer tokens, passwords, session cookies, private keys, or `.env` values
-- Raw production credentials or deployment secrets
-- Private user data
-- Hidden backend assumptions that the agent cannot verify from the public skill contract
-
-Allowed:
-
-- Public endpoints
-- Stable environment variable names without values
-- Public research and documentation
-- Setup instructions and failure messages
-
 ## License
 
-See repository license when present. Individual upstream research or API content remains subject to its own source terms.
+MIT
