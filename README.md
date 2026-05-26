@@ -88,7 +88,8 @@ https://mcp-wallet.mandate.md/mcp
 
 Apply AI sales-led hypergrowth patterns to B2B startup GTM: wedge selection,
 founder-led sales, design partners, paid pilots, labor-cost pricing, and
-enterprise expansion.
+enterprise expansion. Includes Jina Reader markdown references for the public
+hypergrowth research pages.
 
 ```text
 https://sevaustinov.me/hypergrowth-research/
