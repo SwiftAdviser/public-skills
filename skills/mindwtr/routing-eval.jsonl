@@ -1,0 +1,4 @@
+{"intent":"create a Mindwtr task to send the weekly update","expected_skill":"mindwtr","reason":"explicit Mindwtr task creation"}
+{"intent":"add a recurring task in Mindwtr every Monday and Thursday","expected_skill":"mindwtr","reason":"explicit recurring task request"}
+{"intent":"please list my Mindwtr tasks from the inbox","expected_skill":"mindwtr","reason":"Mindwtr task query"}
+{"intent":"complete a Mindwtr task with the exact id 123","expected_skill":"mindwtr","reason":"Mindwtr lifecycle mutation"}

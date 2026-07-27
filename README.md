@@ -18,6 +18,7 @@ Private app source code, deployment configuration, environment files, API keys, 
   - [uah-mono-payouts](#uah-mono-payouts) - USDT BEP20 to UAH payout flow
   - [ai-hypergrowth-gtm](#ai-hypergrowth-gtm) - AI sales-led hypergrowth GTM
   - [high-quality-content-writer](#high-quality-content-writer) - Anti-slop content writing and scoring
+  - [mindwtr](#mindwtr) - Mindwtr Cloud and recurring task CLI
 - [Repository Structure](#repository-structure)
 - [License](#license)
 
@@ -41,6 +42,7 @@ npx skills add SwiftAdviser/public-skills --skill monobank -g -y
 npx skills add SwiftAdviser/public-skills --skill uah-mono-payouts -g -y
 npx skills add SwiftAdviser/public-skills --skill ai-hypergrowth-gtm -g -y
 npx skills add SwiftAdviser/public-skills --skill high-quality-content-writer -g -y
+npx skills add SwiftAdviser/public-skills --skill mindwtr -g -y
 ```
 
 ---
@@ -174,6 +176,32 @@ scripts/content_quality_loop.py
 
 ---
 
+### [mindwtr](skills/mindwtr)
+
+Manage tasks in any authenticated Mindwtr Cloud instance from Codex, OpenClaw, or a shell, including recurring schedules that are not exposed by the current Mindwtr MCP schemas.
+
+- Uses the Mindwtr Cloud REST API with bearer-token or mode-0600 token-file authentication
+- Creates strict calendar or fluid after-completion recurrence
+- Supports list, search, create, update, complete, archive, and guarded soft-delete operations
+- Includes dry-run recurrence payloads, routing fixtures, and deterministic CLI logic
+- Keeps server URLs and tokens out of the public skill
+
+Primary CLI:
+
+```text
+scripts/mindwtr.mjs
+```
+
+**Triggers:**
+
+- "create a Mindwtr task"
+- "add a recurring task every Monday"
+- "list my Mindwtr tasks"
+- "создай задачу в Mindwtr"
+- "добавь повторяющуюся задачу"
+
+---
+
 ## Repository Structure
 
 ```text
@@ -190,6 +218,10 @@ public-skills/
       SKILL.md
       references/
     high-quality-content-writer/
+      SKILL.md
+      references/
+      scripts/
+    mindwtr/
       SKILL.md
       references/
       scripts/
