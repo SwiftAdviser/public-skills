@@ -1,0 +1,7 @@
+.venv/
+.runtime/
+output/
+dist/
+__pycache__/
+*.pyc
+*.private

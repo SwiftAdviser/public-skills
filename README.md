@@ -19,6 +19,7 @@ Private app source code, deployment configuration, environment files, API keys, 
   - [ai-hypergrowth-gtm](#ai-hypergrowth-gtm) - AI sales-led hypergrowth GTM
   - [high-quality-content-writer](#high-quality-content-writer) - Anti-slop content writing and scoring
   - [mindwtr](#mindwtr) - Mindwtr Cloud and recurring task CLI
+  - [proxylane-web-evidence](#proxylane-web-evidence) - Bounded, traceable source observations
 - [Repository Structure](#repository-structure)
 - [License](#license)
 
@@ -202,6 +203,34 @@ scripts/mindwtr.mjs
 
 ---
 
+### [proxylane-web-evidence](skills/proxylane-web-evidence)
+
+Collect bounded, traceable web observations through a supplied [ProxyLane](https://proxylane.dev) HTTP connection before RAG, customer research, citation comparisons or price monitoring.
+
+- Five source modes: YouTube captions, YouTube comments, reviewed Google AI citations, Xiaohongshu notes through an existing MCP session, and identified product offers
+- Source identity checks, credential redaction, raw-input hashes, coverage diagnostics, and bounded process deadlines
+- Synthetic fixtures and a local test suite for portable verification
+- Explicit live-access, regional, variant, checkout, and first-release cross-modal limitations
+
+Install into the current project:
+
+```bash
+npx skills add SwiftAdviser/public-skills --skill proxylane-web-evidence --agent codex --copy -y
+```
+
+[Version 1.0.0 archive](https://github.com/SwiftAdviser/public-skills/releases/download/proxylane-web-evidence-v1.0.0/proxylane-web-evidence-v1.0.0.zip) · [ClawHub](https://clawhub.ai/swiftadviser/proxylane-web-evidence)
+
+**Triggers:**
+
+- "collect verifiable web evidence with ProxyLane"
+- "fetch YouTube transcripts through my proxy for RAG"
+- "collect a bounded YouTube comments sample with source links"
+- "capture Google AI citations for a regional comparison"
+- "collect Xiaohongshu note evidence through my existing MCP"
+- "observe this identified product price through ProxyLane"
+
+---
+
 ## Repository Structure
 
 ```text
@@ -225,6 +254,12 @@ public-skills/
       SKILL.md
       references/
       scripts/
+    proxylane-web-evidence/
+      SKILL.md
+      references/
+      scripts/
+      fixtures/
+      tests/
 ```
 
 Each skill folder is intended to be installable on its own. `SKILL.md` is the full agent contract; reference files are loaded only when the agent needs deeper context.
